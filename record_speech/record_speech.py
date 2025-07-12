@@ -18,15 +18,15 @@ _NUM_SILENCE_CHUNKS_TO_END = int(_SILENCE_TO_END_MS / _CHUNK_DURATION_MS)
 
 class Recorder:
     def __init__(self):
-        self._vad = webrtcvad.Vad(3)  # Set aggressiveness mode (0-3, 3 is most aggressive)
-        self._pyaudio = pyaudio.PyAudio()
-        self._stream = self._pyaudio.open(format=_FORMAT, channels=_CHANNELS, rate=_RATE,
+        self.vad = webrtcvad.Vad(3)  # Set aggressiveness mode (0-3, 3 is most aggressive)
+        self.pyaudio = pyaudio.PyAudio()
+        self.stream = self.pyaudio.open(format=_FORMAT, channels=_CHANNELS, rate=_RATE,
                     input=True, frames_per_buffer=_CHUNK_SIZE)
 
     def __del__(self):
-        self._stream.stop_stream()
-        self._stream.close()
-        self._pyaudio.terminate()
+        self.stream.stop_stream()
+        self.stream.close()
+        self.pyaudio.terminate()
 
     def _record_with_vad(self, file_path_or_stream):
         """
@@ -41,8 +41,8 @@ class Recorder:
         silent_chunks = 0
 
         while True:
-            frame = self._stream.read(_CHUNK_SIZE)
-            is_speech = self._vad.is_speech(frame, _RATE)
+            frame = self.stream.read(_CHUNK_SIZE)
+            is_speech = self.vad.is_speech(frame, _RATE)
 
             if not triggered:
                 ring_buffer.append((frame, is_speech))
@@ -69,7 +69,7 @@ class Recorder:
         # Save the recording
         with wave.open(file_path_or_stream, "wb") as wf:
             wf.setnchannels(_CHANNELS)
-            wf.setsampwidth(self._pyaudio.get_sample_size(_FORMAT))
+            wf.setsampwidth(self.pyaudio.get_sample_size(_FORMAT))
             wf.setframerate(_RATE)
             wf.writeframes(b"".join(voiced_frames))
 
