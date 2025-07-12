@@ -11,6 +11,7 @@ _CHUNK_DURATION_MS = 30  # VAD supports 10, 20, or 30 ms chunks
 _CHUNK_SIZE = int(_RATE * _CHUNK_DURATION_MS / 1000)
 _PADDING_DURATION_MS = 1000  # Add 1 second of padding before and after speech
 _PADDING_DURATION_PERCENT_TO_TRIGGER = 0.2 # If there's sound for > 20% of the padding duration, we start recording.
+_PADDING_DURATION_PERCENT_TO_STOP_RECORDING = 0.4 # If there's no sound for > 40% of the padding duration, we stop recording.
 _NUM_PADDING_CHUNKS = int(_PADDING_DURATION_MS / _CHUNK_DURATION_MS)
 _SILENCE_TO_END_MS = 2000 # Stop recording after 2 seconds of silence
 _NUM_SILENCE_CHUNKS_TO_END = int(_SILENCE_TO_END_MS / _CHUNK_DURATION_MS)
@@ -55,7 +56,7 @@ class Recorder:
                 voiced_frames.append(frame)
                 ring_buffer.append((frame, is_speech))
                 num_unvoiced = len([f for f, speech in ring_buffer if not speech])
-                if num_unvoiced > 0.9 * ring_buffer.maxlen:
+                if num_unvoiced > _PADDING_DURATION_PERCENT_TO_STOP_RECORDING * ring_buffer.maxlen:
                     silent_chunks += 1
                     if silent_chunks > _NUM_SILENCE_CHUNKS_TO_END:
                         print("Silence detected, stopping recording.")
