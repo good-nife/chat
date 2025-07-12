@@ -12,15 +12,24 @@ from speech_to_text import AudioToTextConverter
 from text_processor import GPTTextProcessor
 from text_to_speech import TextToSpeech
 
+import argparse
+
 def main():
-    audio_to_text = AudioToTextConverter("<GCP JSON key>")
+    parser = argparse.ArgumentParser(description="Chatbot with voice interface")
+    parser.add_argument("--gcp_key", type=str, help="Path to Google Cloud credentials JSON file", required=True)
+    parser.add_argument("--openai_key", type=str, help="OpenAI API key", required=True)
+    args = parser.parse_args()
+
+    audio_to_text = AudioToTextConverter(args.gcp_key)
     llm = GPTTextProcessor(
-        api_key="<open API key>",  # Replace with your API key
+        api_key=args.openai_key,
         model="gpt-3.5-turbo"
     )
     tts = TextToSpeech()
 
     context = ""
+    tts.speak("Hello, how can I help?")
+
     text = ""
     while True:
         audio = record_and_return_with_vad()
@@ -37,4 +46,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+        main()
