@@ -8,9 +8,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'speech_to_text'))
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'text_to_speech'))
 
 from record_speech import record_and_return_with_vad
-from speech_to_text import transcribe_audio_content
 from speech_to_text import AudioToTextConverter
-from text_processor import ask_llm
 from text_processor import GPTTextProcessor
 from text_to_speech import TextToSpeech
 
@@ -37,11 +35,6 @@ def main():
         context += f"\nmy last query: {text}\n"
         context += f"\nyour last response: {response}\n"
 
-    # text = transcribe_audio_content(audio, ".wav", "../../gcp/linear-ellipse-465702-e7-e0955d3d7a30.json")
-    # print("Transcribed text:", text)
-    # response = ask_llm(text)
-    # print(f"Response: {response}")
-    # tts.speak(response)
 
 if __name__ == "__main__":
     main()
